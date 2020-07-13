@@ -169,7 +169,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_loglogLabel = new QLabel();
     p_loglogLabel->setText(tr(""));
     ploglog = new QTextBrowser();
-    ploglog->setText(tr("                             ***** Logs from pixhawk and log_data *****            "));
+    ploglog->setText(tr("     ***** Logs from pixhawk and log_data *****     "));
     ploglog->resize(300,100);
 
 
@@ -459,7 +459,7 @@ void UIWindow::muin_quit()
   if (reply == QMessageBox::Yes) {
     qDebug() << "Bye~ jane";
     close();
-  } else {question
+  } else {
     qDebug() << "Whooo!";
   }
 }
