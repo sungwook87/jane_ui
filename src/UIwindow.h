@@ -62,6 +62,9 @@ private:
     Q_SLOT void muin_missionupload();
     Q_SLOT void muin_nonstopmission();
     Q_SLOT void muin_kill();
+    Q_SLOT void muin_sethome();
+    Q_SLOT void muin_rth();
+
     void muin_quit();
 
    // Q_SLOT void halt();
@@ -80,6 +83,8 @@ private:
     QPushButton *p_camstartButton;
     QPushButton *p_camstopButton;
     QPushButton *p_quitButton;
+    QPushButton *p_rthButton;
+
 
     QPushButton *p_throttleup;
     QPushButton *p_throttledown;

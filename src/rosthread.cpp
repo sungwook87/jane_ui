@@ -59,7 +59,11 @@ bool RosThread::init()
     srv_next_mission        = nh.serviceClient<muin_px4::next_mission>("next_mission");
     srv_prev_mission        = nh.serviceClient<muin_px4::previous_mission>("previous_mission");
     srv_upload_mission      = nh.serviceClient<muin_px4::ui_mission_request>("send_mission_info");
-    srv_nonstop_mission     = nh.serviceClient<muin_px4::automatic_mission_start>("automatic_mission_start");
+    srv_nonstop_mission     = nh.serviceClient<muin_px4::automatic_mission_start>("auto_mission");
+    srv_sethome             = nh.serviceClient<mavros_msgs::CommandHome>("/mavros/cmd/set_home");
+    srv_kill                = nh.serviceClient<mavros_msgs::CommandLong>("/mavros/cmd/command");
+    srv_rth                 = nh.serviceClient<muin_px4::return_home>("return_home");
+
     m_pThread->start();
     return true;
 }//set up the thread
@@ -395,6 +399,8 @@ void RosThread::fn_local2gps()
 void RosThread::fn_nonstop_mission()
 {
   muin_px4::automatic_mission_start srv;
+  nonstop_mission = !nonstop_mission;
+  srv.request.start_mission = nonstop_mission;
   srv_nonstop_mission.call(srv);
   ROS_INFO("%d",srv.response.result);
   ROS_INFO("nonstop mission");
@@ -402,10 +408,29 @@ void RosThread::fn_nonstop_mission()
 
 void RosThread::fn_kill()
 {
-  //muin_px4::automatic_mission_start srv;
-  //srv_nonstop_mission.call(srv);
- // ROS_INFO("%d",srv.response.result);
-  ROS_INFO("kill!!");
+  mavros_msgs::CommandLong srv;
+  srv.request.command=400;
+  srv.request.param2=21196.0;
+  srv_kill.call(srv);
+  ROS_INFO("%d",srv.response.success);
+  ROS_INFO("kill !!");
+}
+
+void RosThread::fn_sethome()
+{
+  mavros_msgs::CommandHome srv;
+  srv.request.current_gps = true;
+  srv_sethome.call(srv);
+  ROS_INFO("%d",srv.response.success);
+  ROS_INFO("set home");
+}
+
+void RosThread::fn_returnhome()
+{
+  muin_px4::return_home srv;
+  srv_rth.call(srv);
+  ROS_INFO("%d",srv.response.result);
+  ROS_INFO("Retrun-to-Home");
 }
 
 

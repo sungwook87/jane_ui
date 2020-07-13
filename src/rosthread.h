@@ -46,6 +46,9 @@
 #include "muin_px4/log_data.h"
 #include "muin_px4/ui_mission_request.h"
 #include "muin_px4/automatic_mission_start.h"
+#include "muin_px4/return_home.h"
+#include "mavros_msgs/CommandHome.h"
+#include "mavros_msgs/CommandLong.h"
 
 class RosThread : public QObject {
   Q_OBJECT
@@ -80,6 +83,7 @@ private:
 
 
    // double lon, lat, alt;
+    bool nonstop_mission = false;
 
     double m_maxRange;
     double m_minRange;
@@ -117,6 +121,9 @@ private:
     ros::ServiceClient srv_prev_mission;
     ros::ServiceClient srv_local2gps;
     ros::ServiceClient srv_nonstop_mission;
+    ros::ServiceClient srv_sethome;
+    ros::ServiceClient srv_kill;
+    ros::ServiceClient srv_rth;
 
 
 
@@ -153,6 +160,9 @@ public:
     void fn_local2gps();
     void fn_nonstop_mission();
     void fn_kill();
+    void fn_returnhome();
+    void fn_sethome();
+
 
 
     Q_SLOT void run();

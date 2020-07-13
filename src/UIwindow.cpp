@@ -20,6 +20,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_nextwaypoint = new QPushButton(tr("&Next WP"));
     p_previouswaypoint = new QPushButton(tr("&Previous WP"));
     p_killButton = new QPushButton(tr("&KILL"));
+    p_rthButton = new QPushButton(tr("&Return Home"));
 
 //    p_throttleup = new QPushButton();
 //    p_throttledown = new QPushButton();
@@ -318,8 +319,8 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     leftLayout->addLayout(p_satelliteLayout);
     leftLayout->addLayout(p_globallatLayout);
-  //  leftLayout->addLayout(p_estlatLayout);
-  //  leftLayout->addLayout(p_xLayout);
+    leftLayout->addLayout(p_estlatLayout);
+    leftLayout->addLayout(p_xLayout);
   //  leftLayout->addLayout(p_camLayout);
     leftLayout->addLayout(p_mapLayout);
     leftLayout->addLayout(p_logoLayout);
@@ -361,8 +362,8 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     layout5->addWidget(p_previouswaypoint);
     layout5->addWidget(p_nextwaypoint);
 
-    layout6->addWidget(p_camstartButton);
-    layout6->addWidget(p_camstopButton);
+  //  layout6->addWidget(p_camstartButton);
+  //  layout6->addWidget(p_camstopButton);
 
 //    layout7->addSpacing(50);
 //    layout7->addWidget(p_throttleup);
@@ -380,6 +381,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 //    layout9->addSpacing(100);
 //    layout9->addWidget(p_backwardButton);
 //    layout9->addSpacing(50);
+    layout8->addWidget(p_rthButton);
     layout9->addWidget(p_killButton);
     layout10->addWidget(p_quitButton);
 
@@ -392,7 +394,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     rightLayout->addLayout(p_llogLayout);
 
 //    rightLayout->addLayout(layout7);
-//    rightLayout->addLayout(layout8);
+    rightLayout->addLayout(layout8);
     rightLayout->addLayout(layout9);
     rightLayout->addLayout(layout10);
 
@@ -404,7 +406,8 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     show();
 
     setWindowTitle(tr("Jane is FREE"));
-
+    connect(p_rthButton,            &QPushButton::clicked, this, &UIWindow::muin_rth);
+    connect(p_sethome,              &QPushButton::clicked, this, &UIWindow::muin_sethome);
     connect(p_quitButton,           &QPushButton::clicked, this, &UIWindow::muin_quit);
     connect(p_takeoffButton,        &QPushButton::clicked, this, &UIWindow::muin_takeoff);
     connect(p_landingButton,        &QPushButton::clicked, this, &UIWindow::muin_landing);
@@ -442,7 +445,8 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 }//end constructor
 
 //void UIWindow::halt(){ m_RosThread.SetSpeed(0, 0); }
-
+void UIWindow::muin_sethome(){m_RosThread.fn_sethome();}
+void UIWindow::muin_rth(){m_RosThread.fn_returnhome();}
 void UIWindow::muin_takeoff(){m_RosThread.fn_take_off();}
 void UIWindow::muin_landing(){m_RosThread.fn_landing();}
 void UIWindow::muin_elanding(){m_RosThread.fn_emergency_landing();}
