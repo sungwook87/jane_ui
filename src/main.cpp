@@ -8,7 +8,6 @@ int main(int argc, char** argv) {
 
     UIWindow s(argc, argv);
     ROS_INFO("hi~ui");
-
-  return app.exec();
+    return app.exec();
 }
 

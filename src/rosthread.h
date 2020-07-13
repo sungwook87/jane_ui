@@ -152,6 +152,8 @@ public:
     void fn_prev_mission();
     void fn_local2gps();
     void fn_nonstop_mission();
+    void fn_kill();
+
 
     Q_SLOT void run();
 

@@ -400,4 +400,12 @@ void RosThread::fn_nonstop_mission()
   ROS_INFO("nonstop mission");
 }
 
+void RosThread::fn_kill()
+{
+  //muin_px4::automatic_mission_start srv;
+  //srv_nonstop_mission.call(srv);
+ // ROS_INFO("%d",srv.response.result);
+  ROS_INFO("kill!!");
+}
+
 

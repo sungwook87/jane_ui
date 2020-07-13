@@ -19,6 +19,8 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_local2gps = new QPushButton(tr("&Local2GPS"));
     p_nextwaypoint = new QPushButton(tr("&Next WP"));
     p_previouswaypoint = new QPushButton(tr("&Previous WP"));
+    p_killButton = new QPushButton(tr("&KILL"));
+
 //    p_throttleup = new QPushButton();
 //    p_throttledown = new QPushButton();
 //    p_cwyaw = new QPushButton();
@@ -137,7 +139,6 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
    // p_llogLayout->setMargin(100);
     p_mapLayout = new QHBoxLayout();
     p_camLayout = new QHBoxLayout();
-
 
 
     p_satelliteLabel = new QLabel();
@@ -379,7 +380,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 //    layout9->addSpacing(100);
 //    layout9->addWidget(p_backwardButton);
 //    layout9->addSpacing(50);
-
+    layout9->addWidget(p_killButton);
     layout10->addWidget(p_quitButton);
 
     rightLayout->addLayout(layout);
@@ -392,7 +393,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
 //    rightLayout->addLayout(layout7);
 //    rightLayout->addLayout(layout8);
-//    rightLayout->addLayout(layout9);
+    rightLayout->addLayout(layout9);
     rightLayout->addLayout(layout10);
 
     mainLayout->addLayout(leftLayout);
@@ -404,7 +405,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     setWindowTitle(tr("Jane is FREE"));
 
-    connect(p_quitButton,           &QPushButton::clicked, this, &UIWindow::close);
+    connect(p_quitButton,           &QPushButton::clicked, this, &UIWindow::muin_quit);
     connect(p_takeoffButton,        &QPushButton::clicked, this, &UIWindow::muin_takeoff);
     connect(p_landingButton,        &QPushButton::clicked, this, &UIWindow::muin_landing);
     connect(p_elandingButton,       &QPushButton::clicked, this, &UIWindow::muin_elanding);
@@ -416,6 +417,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     connect(p_missionuploadButton,  &QPushButton::clicked, this, &UIWindow::muin_missionupload);
     connect(p_camstartButton,       &QPushButton::clicked, this, &UIWindow::muin_camstart);
     connect(p_camstopButton,        &QPushButton::clicked, this, &UIWindow::muin_camstop);
+    connect(p_killButton,        &QPushButton::clicked, this, &UIWindow::muin_kill);
 
     connect(&m_RosThread,         &RosThread::localpose, this, &UIWindow::updatePoseDisplay);
     connect(&m_RosThread,         &RosThread::gpscount, this, &UIWindow::satelliteDisplay);
@@ -445,15 +447,35 @@ void UIWindow::muin_takeoff(){m_RosThread.fn_take_off();}
 void UIWindow::muin_landing(){m_RosThread.fn_landing();}
 void UIWindow::muin_elanding(){m_RosThread.fn_emergency_landing();}
 void UIWindow::muin_missionpause(){m_RosThread.fn_pause_mission();}
-void UIWindow::muin_camstart(){m_RosThread.fn_record_start();}
-void UIWindow::muin_camstop(){m_RosThread.fn_record_stop();}
 void UIWindow::muin_local2gps(){m_RosThread.fn_local2gps();}
 void UIWindow::muin_nextmission(){m_RosThread.fn_next_mission();}
 void UIWindow::muin_prevmission(){m_RosThread.fn_prev_mission();}
 void UIWindow::muin_missionupload(){m_RosThread.fn_upload_mission();}
 void UIWindow::muin_nonstopmission(){m_RosThread.fn_nonstop_mission();}
-
-
+void UIWindow::muin_quit()
+{
+  QMessageBox::StandardButton reply;
+  reply = QMessageBox::question(this, "Hey!", "want to Quit?", QMessageBox::Yes|QMessageBox::No);
+  if (reply == QMessageBox::Yes) {
+    qDebug() << "Bye~ jane";
+    close();
+  } else {question
+    qDebug() << "Whooo!";
+  }
+}
+void UIWindow::muin_camstart(){m_RosThread.fn_record_start();}
+void UIWindow::muin_camstop(){m_RosThread.fn_record_stop();}
+void UIWindow::muin_kill()
+{
+  QMessageBox::StandardButton reply;
+  reply = QMessageBox::critical(this, "Hey!", "KILL ?", QMessageBox::Yes|QMessageBox::No);
+  if (reply == QMessageBox::Yes) {
+    qDebug() << "T_T";
+    m_RosThread.fn_kill();
+  } else {
+    qDebug() << "^_^!";
+  }
+}
 
 
 void UIWindow::satelliteDisplay(unsigned int count)

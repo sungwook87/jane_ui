@@ -61,9 +61,11 @@ private:
     Q_SLOT void muin_prevmission();
     Q_SLOT void muin_missionupload();
     Q_SLOT void muin_nonstopmission();
+    Q_SLOT void muin_kill();
+    void muin_quit();
 
    // Q_SLOT void halt();
-
+    QPushButton *p_killButton;
     QPushButton *p_takeoffButton;
     QPushButton *p_landingButton;
     QPushButton *p_elandingButton;
