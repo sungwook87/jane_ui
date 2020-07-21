@@ -64,9 +64,8 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_batteryLayout = new QHBoxLayout();
     p_flighttimeLayout = new QHBoxLayout();
     p_llogLayout = new QHBoxLayout();
-    p_lllogLayout = new QHBoxLayout();
     p_mapLayout = new QHBoxLayout();
-    p_camLayout = new QHBoxLayout();
+  //  p_camLayout = new QHBoxLayout();
 
     p_satelliteLabel = new QLabel();
     p_satelliteLabel->setText(tr("GPS satellite:"));
@@ -96,7 +95,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_loglogLabel = new QLabel();
     p_loglogLabel->setText(tr(""));
     ploglog = new QTextBrowser();
-    ploglog->setText(tr("                             ***** Logs from pixhawk and log_data *****            "));
+    ploglog->setText(tr("     ***** Logs from pixhawk and log_data *****     "));
     ploglog->resize(300,100);
 
 
@@ -190,9 +189,9 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     p_map = new QGraphicsScene();
     p_mapview = new QGraphicsView(p_map);
- //   p_mapLayout->addWidget(p_mapview);
-    p_cam = new QGraphicsScene();
-    p_camview = new QGraphicsView(p_cam);
+  //  p_cam = new QGraphicsScene();
+  //  p_camview = new QGraphicsView(p_cam);
+    //p_camview->sizePolicy();
 
     p_satelliteLayout->addWidget(p_satelliteLabel);
     p_satelliteLayout->addWidget(p_satelliteDisplay);
@@ -223,9 +222,9 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_estlatLayout->addWidget(p_imuLabel);
     p_estlatLayout->addWidget(p_imuDisplay);
 
-    p_llogLayout->addWidget(p_camview);
-    p_llogLayout->addWidget(p_mapview);
-
+    p_llogLayout->addWidget(ploglog);
+    p_mapLayout->addWidget(p_mapview);
+   // p_camLayout->addWidget(p_camview);
 
     p_xLayout->addWidget(p_xLabel);
     p_xLayout->addWidget(p_xDisplay);
@@ -247,8 +246,8 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     leftLayout->addLayout(p_globallatLayout);
     leftLayout->addLayout(p_estlatLayout);
     leftLayout->addLayout(p_xLayout);
-   // leftLayout->addLayout(p_xvelLayout);
-    leftLayout->addLayout(p_llogLayout);
+    leftLayout->addLayout(p_mapLayout);
+   // leftLayout->addLayout(p_camLayout);
     leftLayout->addLayout(p_logoLayout);
 
 
@@ -256,6 +255,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     /** Set up the Layouts **/
 
     rightLayout = new QVBoxLayout();
+    //rightLayout->setSizeConstraint(SetMinimumSize);
     layout = new QHBoxLayout();
     layout2 = new QHBoxLayout();
     layout3 = new QHBoxLayout();
@@ -270,8 +270,6 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
 
     mainLayout = new QHBoxLayout();
-
-    p_lllogLayout->addWidget(ploglog);
 
     layout->addWidget(p_takeoffButton);
     layout->addWidget(p_landingButton);
@@ -299,23 +297,20 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     rightLayout->addLayout(layout4);
     rightLayout->addLayout(layout5);
     rightLayout->addLayout(layout6);
-    rightLayout->addLayout(p_lllogLayout);
+    rightLayout->addLayout(p_llogLayout);
     rightLayout->addLayout(layout8);
     rightLayout->addLayout(layout9);
     rightLayout->addLayout(layout10);
 
-
     mainLayout->addLayout(leftLayout);
-   // mainLayout->addLayout(p_mapLayout);
     mainLayout->addLayout(rightLayout);
     setLayout(mainLayout);
 
     show();
 
-    setWindowTitle(tr("Muinche GCS"));
+    setWindowTitle(tr("Jane is FREE"));
     connect(p_rthButton,            &QPushButton::clicked, this, &UIWindow::muin_rth);
     connect(p_sethome,              &QPushButton::clicked, this, &UIWindow::muin_sethome);
-//    connect(p_quitButton,           &QPushButton::clicked, this, &UIWindow::close);
     connect(p_quitButton,           &QPushButton::clicked, this, &UIWindow::muin_quit);
     connect(p_takeoffButton,        &QPushButton::clicked, this, &UIWindow::muin_takeoff);
     connect(p_landingButton,        &QPushButton::clicked, this, &UIWindow::muin_landing);
@@ -345,12 +340,16 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     connect(&m_RosThread,         &RosThread::logdata, this, &UIWindow::logDisplay);
     qRegisterMetaType< cv::Mat >("cv::Mat");
     connect(&m_RosThread,         &RosThread::mapimage, this, &UIWindow::mapimageDisplay);
-    connect(&m_RosThread,         &RosThread::camimage, this, &UIWindow::camimageDisplay);
+  //  qRegisterMetaType< cv::Mat >("cv::Mat");
+  //  connect(&m_RosThread,         &RosThread::camimage, this, &UIWindow::camimageDisplay);
 
 
     m_RosThread.init();
 }//end constructor
+
+//void UIWindow::halt(){ m_RosThread.SetSpeed(0, 0); }
 void UIWindow::muin_sethome(){m_RosThread.fn_sethome();}
+void UIWindow::muin_rth(){m_RosThread.fn_returnhome();}
 void UIWindow::muin_takeoff(){m_RosThread.fn_take_off();}
 void UIWindow::muin_landing(){m_RosThread.fn_landing();}
 void UIWindow::muin_elanding(){m_RosThread.fn_emergency_landing();}
@@ -360,27 +359,15 @@ void UIWindow::muin_nextmission(){m_RosThread.fn_next_mission();}
 void UIWindow::muin_prevmission(){m_RosThread.fn_prev_mission();}
 void UIWindow::muin_missionupload(){m_RosThread.fn_upload_mission();}
 void UIWindow::muin_nonstopmission(){m_RosThread.fn_nonstop_mission();}
-void UIWindow::muin_rth()
-{
-  QMessageBox::StandardButton reply;
-  reply = QMessageBox::critical(this, "Hey!", "Go Home?", QMessageBox::Yes|QMessageBox::No);
-  if (reply == QMessageBox::Yes) {
-    qDebug() << "<<<<<     Go Home     >>>>>";
-    m_RosThread.fn_returnhome();
-  } else {
-    qDebug() << "<<<<<     Stay!     >>>>>";
-  }
-}
-
 void UIWindow::muin_quit()
 {
   QMessageBox::StandardButton reply;
   reply = QMessageBox::question(this, "Hey!", "want to Quit?", QMessageBox::Yes|QMessageBox::No);
   if (reply == QMessageBox::Yes) {
-    qDebug() << "<<<<<     Bye~ Jane     >>>>>";
+    qDebug() << "Bye~ jane";
     close();
   } else {
-    qDebug() << "<<<<<     Whooo!     >>>>>";
+    qDebug() << "Whooo!";
   }
 }
 void UIWindow::muin_camstart(){m_RosThread.fn_record_start();}
@@ -390,10 +377,10 @@ void UIWindow::muin_kill()
   QMessageBox::StandardButton reply;
   reply = QMessageBox::critical(this, "Hey!", "KILL ?", QMessageBox::Yes|QMessageBox::No);
   if (reply == QMessageBox::Yes) {
-    qDebug() << "<<<<<     T_T     >>>>>";
+    qDebug() << "T_T";
     m_RosThread.fn_kill();
   } else {
-    qDebug() << "<<<<<     ^_^!     >>>>>";
+    qDebug() << "^_^!";
   }
 }
 
@@ -515,28 +502,30 @@ void UIWindow::bodyvelDisplay(double x, double y, double z)
 void UIWindow::mapimageDisplay(cv::Mat image)
 {
   cv::cvtColor(image, image, CV_BGR2RGB);
-  QImage imgIn= QImage((uchar*) image.data, image.cols, image.rows, image.step, QImage::Format_RGB888);
-  QPixmap pixmap = QPixmap::fromImage(imgIn);
-  p_map->clear();
-  p_map->addPixmap(pixmap);
-
- // std::cout<<"hi"<<std::endl;
-
-}
-
-void UIWindow::camimageDisplay(cv::Mat image)
-{
-  cv::cvtColor(image, image, CV_BGR2RGB);
-  QImage imgIn= QImage((uchar*) image.data, image.cols, image.rows, image.step, QImage::Format_RGB888);
+  QImage imgIn = QImage((uchar*) image.data, image.cols, image.rows, image.step, QImage::Format_RGB32);
   QPixmap pixmap = QPixmap::fromImage(imgIn);
   /****   very important here ****/
   /* without clearing the qgraphicscene here,
    * Fxxxing memory leak will bully you */
-  p_cam->clear();
-  p_cam->addPixmap(pixmap);
+  p_map->clear();
+  p_map->addPixmap(pixmap);
+
+
+  std::cout<<"hi"<<std::endl;
+
 }
 
-
+//void UIWindow::camimageDisplay(cv::Mat image)
+//{
+//  cv::cvtColor(image, image, CV_BGR2RGB);
+//  QImage imgIn= QImage((uchar*) image.data, image.cols, image.rows, image.step, QImage::Format_RGB888);
+//  QPixmap pixmap = QPixmap::fromImage(imgIn);
+//  /****   very important here ****/
+//  /* without clearing the qgraphicscene here,
+//   * Fxxxing memory leak will bully you */
+//  p_cam->clear();
+//  p_cam->addPixmap(pixmap);
+//}
 
 }//end namespace
 

@@ -107,7 +107,7 @@ private:
     ros::Subscriber sub_bodyvel;
 
     ros::Subscriber sub_2dmap;
-    ros::Subscriber sub_cam;
+    ros::Subscriber sub_cam; 
     ros::ServiceClient srv_take_off;
     ros::ServiceClient srv_landing;
     ros::ServiceClient srv_pause_mission;

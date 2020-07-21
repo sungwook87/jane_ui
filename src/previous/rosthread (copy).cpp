@@ -47,7 +47,7 @@ bool RosThread::init()
     sub_bodyvel = nh.subscribe("/mavros/local_position/velocity_body", 1, &RosThread::bodyvelCallback, this);
     sub_2dmap = nh.subscribe("/mapimage", 1, &RosThread::mapCallback, this);
     sub_cam = nh.subscribe("/camera/image", 1, &RosThread::camCallback, this);
- //   pub_img = nh.advertise<sensor_msgs::Image>("/output_video", 1);
+    pub_img = nh.advertise<sensor_msgs::Image>("/output_video", 1);
 // service //
     srv_take_off            = nh.serviceClient<muin_px4::take_off>("take_off");
     srv_landing             = nh.serviceClient<muin_px4::landing>("landing");
@@ -272,7 +272,7 @@ void RosThread::mapCallback(const sensor_msgs::ImageConstPtr &msg)
   try
   {
      cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-     cv::resize(cv_ptr->image, imagemap, cv::Size(600,600), 0, 0, cv::INTER_LINEAR);
+     cv::resize(cv_ptr->image, imagemap, cv::Size(640,360), 0, 0, cv::INTER_LINEAR);
   }
   catch (cv_bridge::Exception& e)
   {

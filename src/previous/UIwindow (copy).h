@@ -43,6 +43,7 @@ public:
 
 
 
+
   //  qRegisterMetaType<std::std>
 
 
@@ -61,9 +62,10 @@ private:
     Q_SLOT void muin_kill();
     Q_SLOT void muin_sethome();
     Q_SLOT void muin_rth();
+
     void muin_quit();
 
-
+   // Q_SLOT void halt();
     QPushButton *p_killButton;
     QPushButton *p_takeoffButton;
     QPushButton *p_landingButton;
@@ -80,9 +82,12 @@ private:
     QPushButton *p_camstopButton;
     QPushButton *p_quitButton;
     QPushButton *p_rthButton;
+
     QPushButton *p_logoButton;
+
     QTextBrowser *ploglog;
 
+  //  std::string log;
 
 
 
@@ -165,7 +170,6 @@ private:
     QHBoxLayout *p_modeLayout;
     QHBoxLayout *p_logLayout;
     QHBoxLayout *p_llogLayout;
-    QHBoxLayout *p_lllogLayout;
     QHBoxLayout *p_imuLayout;
     QHBoxLayout *p_logoLayout;
 
