@@ -47,21 +47,21 @@ public:
 
 
 private:
-    Q_SLOT void muin_takeoff();
-    Q_SLOT void muin_landing();
-    Q_SLOT void muin_elanding();
-    Q_SLOT void muin_missionpause();
-    Q_SLOT void muin_camstart();
-    Q_SLOT void muin_camstop();
-    Q_SLOT void muin_local2gps();
-    Q_SLOT void muin_nextmission();
-    Q_SLOT void muin_prevmission();
-    Q_SLOT void muin_missionupload();
-    Q_SLOT void muin_nonstopmission();
-    Q_SLOT void muin_kill();
-    Q_SLOT void muin_sethome();
-    Q_SLOT void muin_rth();
-    void muin_quit();
+    Q_SLOT void jane_takeoff();
+    Q_SLOT void jane_landing();
+    Q_SLOT void jane_elanding();
+    Q_SLOT void jane_missionpause();
+    Q_SLOT void jane_camstart();
+    Q_SLOT void jane_camstop();
+    Q_SLOT void jane_local2gps();
+    Q_SLOT void jane_nextmission();
+    Q_SLOT void jane_prevmission();
+    Q_SLOT void jane_missionupload();
+    Q_SLOT void jane_nonstopmission();
+    Q_SLOT void jane_kill();
+    Q_SLOT void jane_sethome();
+    Q_SLOT void jane_rth();
+    void jane_quit();
 
 
     QPushButton *p_killButton;

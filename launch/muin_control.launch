@@ -1,0 +1,4 @@
+<launch>
+    <rosparam command="load" file="$(find jane_ui)/config/jane_control.yaml"/>
+    <node pkg="jane_ui" type="jane_control" name="jane_control" output="screen"/>
+</launch>

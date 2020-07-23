@@ -1,0 +1,10 @@
+<launch>
+	<!-- waypoint text reader -->
+	<arg name="waypoint_file_path" default="$(find muin_px4)/muin_waypoint_reader/data/test1.txt"/>
+	<param name="/muin_px4/wp_file_path" type="string" value="$(arg waypoint_file_path)" />
+	<node name="muin_waypoint_reader" pkg="muin_px4" type="muin_waypoint_reader" output="screen"/>
+
+	<!-- control node -->
+	<rosparam command="load" file="$(find muin_px4)/config/muin_control.yaml"/>
+	<node pkg="muin_px4" type="muin_control" name="muin_control" output="screen"/>
+</launch>

@@ -87,7 +87,10 @@ catkin_package(
 )
 
 
-qt5_add_resources(QT_RESOURCES_CPP qt_resources/arrows.qrc)
+#########################
+##         GUI         ##
+#########################
+#qt5_add_resources(QT_RESOURCES_CPP qt_resources/arrows.qrc)
 qt5_wrap_cpp(QT_MOC_HPP src/UIwindow.h src/rosthread.h)
 
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
@@ -97,3 +100,49 @@ add_executable(jane_ui_node src/UIwindow.cpp src/rosthread.cpp src/main.cpp
 add_dependencies(jane_ui_node jane_ui_generate_messages_cpp)
 target_link_libraries(jane_ui_node ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::Widgets)
 install(TARGETS jane_ui_node  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+
+#########################
+##   2D visualization  ##
+#########################
+set(geo_source
+    jane_2dviz/GeoCoordiConv/GeoCoordConv.cpp
+    jane_2dviz/GeoCoordiConv/GeoCoordConv.h
+    )
+set(2dviz_source
+    jane_2dviz/src/2dviz.cpp
+    jane_2dviz/src/2dviz.h
+)
+
+add_executable(jane_2dviz jane_2dviz/jane_2dviz.cpp ${2dviz_source} ${geo_source})
+target_link_libraries(jane_2dviz ${catkin_LIBRARIES} ${CURL_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(jane_2dviz jane_ui_generate_messages_cpp)
+
+#########################
+##       Control       ##
+#########################
+set(control_source
+    jane_control/src/fncs_header.hpp
+    jane_control/src/srv_fncs.cpp
+    jane_control/src/sub_fncs.cpp
+    jane_control/src/cont_fncs.cpp
+    include/UTM_lib/UTM.cpp
+    include/UTM_lib/UTM.h
+)
+add_executable(jane_control jane_control/jane_control.cpp ${control_source})
+target_link_libraries(jane_control
+    ${catkin_LIBRARIES}
+    ${OpenCV_LIBRARIES}
+)
+add_dependencies(jane_control jane_ui_generate_messages_cpp)
+
+#########################
+##      WP reader      ##
+#########################
+add_executable(jane_waypoint_reader jane_waypoint_reader/src/wp_reader_integration.cpp)
+add_dependencies(jane_waypoint_reader jane_ui_generate_messages_cpp)
+target_link_libraries(jane_waypoint_reader
+                ${catkin_LIBRARIES}
+                )
+
+

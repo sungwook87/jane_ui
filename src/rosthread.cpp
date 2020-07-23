@@ -35,12 +35,12 @@ bool RosThread::init()
 //  subscribe //
     sub_pix_diagnostic = nh.subscribe("/diagnostics",1, &RosThread::gpssatCallback, this);
     sub_estgps = nh.subscribe("/estimated_global_position",1,&RosThread::estgpsCallback, this);
-    sub_localpose = nh.subscribe("/mavros/global_position/local", 1, &RosThread::localposeCallback, this);
+    sub_localpose = nh.subscribe("/mavros/local_position/pose", 1, &RosThread::localposeCallback, this);
     sub_imu = nh.subscribe("/mavros/imu/data",1, &RosThread::imuCallback, this);
     sub_status = nh.subscribe("/mavros/statustext/recv", 1, &RosThread::statusCallback, this);
     sub_battery = nh.subscribe("/mavros/battery", 1, &RosThread::batteryCallback, this);
     sub_state = nh.subscribe("/mavros/state", 1, &RosThread::mavstateCallback, this);
-    sub_logdata = nh.subscribe("/muin/log_data", 1, &RosThread::logdataCallback, this);
+    sub_logdata = nh.subscribe("/jane/log_data", 1, &RosThread::logdataCallback, this);
     sub_globalgps = nh.subscribe("/mavros/global_position/global", 1, &RosThread::gpsglobalCallback, this);
     sub_fixgps = nh.subscribe("/mavros/global_position/raw/fix", 1, &RosThread::gpsfixCallback, this);
     sub_compass = nh.subscribe("/mavros/global_position/compass_hdg", 1, &RosThread::gpscompassCallback, this);
@@ -49,20 +49,20 @@ bool RosThread::init()
     sub_cam = nh.subscribe("/camera/image", 1, &RosThread::camCallback, this);
  //   pub_img = nh.advertise<sensor_msgs::Image>("/output_video", 1);
 // service //
-    srv_take_off            = nh.serviceClient<muin_px4::take_off>("take_off");
-    srv_landing             = nh.serviceClient<muin_px4::landing>("landing");
-    srv_emergency_landing   = nh.serviceClient<muin_px4::emergency_landing>("emergency_landing");
-    srv_pause_mission       = nh.serviceClient<muin_px4::pause_mission>("pause_mission");
-    srv_record_start        = nh.serviceClient<muin_px4::test_srv>("test_srv");
-    srv_record_stop         = nh.serviceClient<muin_px4::test_srv>("test_srv");
-    srv_local2gps           = nh.serviceClient<muin_px4::start_trig>("start_trigger");
-    srv_next_mission        = nh.serviceClient<muin_px4::next_mission>("next_mission");
-    srv_prev_mission        = nh.serviceClient<muin_px4::previous_mission>("previous_mission");
-    srv_upload_mission      = nh.serviceClient<muin_px4::ui_mission_request>("send_mission_info");
-    srv_nonstop_mission     = nh.serviceClient<muin_px4::automatic_mission_start>("auto_mission");
+    srv_take_off            = nh.serviceClient<jane_ui::take_off>("take_off");
+    srv_landing             = nh.serviceClient<jane_ui::landing>("landing");
+    srv_emergency_landing   = nh.serviceClient<jane_ui::emergency_landing>("emergency_landing");
+    srv_pause_mission       = nh.serviceClient<jane_ui::pause_mission>("pause_mission");
+    srv_record_start        = nh.serviceClient<jane_ui::test_srv>("test_srv");
+    srv_record_stop         = nh.serviceClient<jane_ui::test_srv>("test_srv");
+    srv_local2gps           = nh.serviceClient<jane_ui::start_trig>("start_trigger");
+    srv_next_mission        = nh.serviceClient<jane_ui::next_mission>("next_mission");
+    srv_prev_mission        = nh.serviceClient<jane_ui::previous_mission>("previous_mission");
+    srv_upload_mission      = nh.serviceClient<jane_ui::ui_mission_request>("send_mission_info");
+    srv_nonstop_mission     = nh.serviceClient<jane_ui::automatic_mission_start>("auto_mission");
     srv_sethome             = nh.serviceClient<mavros_msgs::CommandHome>("/mavros/cmd/set_home");
     srv_kill                = nh.serviceClient<mavros_msgs::CommandLong>("/mavros/cmd/command");
-    srv_rth                 = nh.serviceClient<muin_px4::return_home>("return_home");
+    srv_rth                 = nh.serviceClient<jane_ui::return_home>("return_home");
 
     m_pThread->start();
     return true;
@@ -129,7 +129,7 @@ void RosThread::statusCallback(const mavros_msgs::StatusText::ConstPtr &msg)
   Q_EMIT status(tmp_s);
 }
 
-void RosThread::logdataCallback(const muin_px4::log_data::ConstPtr &msg)
+void RosThread::logdataCallback(const jane_ui::log_data::ConstPtr &msg)
 {
   QMutex * pMutex = new QMutex();
   pMutex->lock();
@@ -235,14 +235,14 @@ void RosThread::imuCallback(const sensor_msgs::Imu &msg)
   Q_EMIT imu(m_heading);
 }
 
-void RosThread::localposeCallback(const nav_msgs::Odometry::ConstPtr &msg)
+void RosThread::localposeCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 {
   QMutex * pMutex = new QMutex();
   pMutex->lock();
-  m_xPos = msg->pose.pose.position.x;
-  m_yPos = msg->pose.pose.position.y;
-  m_zPos = msg->pose.pose.position.z;
-  geometry_msgs::Quaternion q = msg->pose.pose.orientation;
+  m_xPos = msg->pose.position.x;
+  m_yPos = msg->pose.position.y;
+  m_zPos = msg->pose.position.z;
+  geometry_msgs::Quaternion q = msg->pose.orientation;
   geometry_msgs::Vector3 res;
   tf::Matrix3x3 R_FLU2ENU(tf::Quaternion(q.x, q.y, q.z, q.w));
   R_FLU2ENU.getRPY(res.x, res.y, res.z);
@@ -317,7 +317,7 @@ void RosThread::camCallback(const sensor_msgs::ImageConstPtr &msg)
 
 void RosThread::fn_take_off()
 {
-  muin_px4::take_off srv;
+  jane_ui::take_off srv;
   srv_take_off.call(srv);
   ROS_INFO("%d",srv.response.result);
   ROS_INFO("takeoff");
@@ -325,7 +325,7 @@ void RosThread::fn_take_off()
 
 void RosThread::fn_landing()
 {
-  muin_px4::landing srv;
+  jane_ui::landing srv;
   srv_landing.call(srv);
   ROS_INFO("%d",srv.response.result);
   ROS_INFO("landing");
@@ -333,7 +333,7 @@ void RosThread::fn_landing()
 
 void RosThread::fn_emergency_landing()
 {
-  muin_px4::emergency_landing srv;
+  jane_ui::emergency_landing srv;
   srv_emergency_landing.call(srv);
   ROS_INFO("%d",srv.response.result);
   ROS_INFO("e-landing");
@@ -341,7 +341,7 @@ void RosThread::fn_emergency_landing()
 
 void RosThread::fn_pause_mission()
 {
-  muin_px4::pause_mission srv;
+  jane_ui::pause_mission srv;
   srv_pause_mission.call(srv);
   ROS_INFO("%d",srv.response.result);
   ROS_INFO("pause");
@@ -349,7 +349,7 @@ void RosThread::fn_pause_mission()
 
 void RosThread::fn_next_mission()
 {
-  muin_px4::next_mission srv;
+  jane_ui::next_mission srv;
   srv_next_mission.call(srv);
   ROS_INFO("%d",srv.response.result);
   ROS_INFO("next");
@@ -357,7 +357,7 @@ void RosThread::fn_next_mission()
 
 void RosThread::fn_prev_mission()
 {
-  muin_px4::previous_mission srv;
+  jane_ui::previous_mission srv;
   srv_prev_mission.call(srv);
   ROS_INFO("%d",srv.response.result);
   ROS_INFO("previous");
@@ -365,7 +365,7 @@ void RosThread::fn_prev_mission()
 
 void RosThread::fn_record_start()
 {
-  muin_px4::record_start srv;
+  jane_ui::record_start srv;
   srv.request.value=1;
   srv_record_start.call(srv);
   ROS_INFO("%d",srv.response.result);
@@ -374,7 +374,7 @@ void RosThread::fn_record_start()
 
 void RosThread::fn_record_stop()
 {
-  muin_px4::record_stop srv;
+  jane_ui::record_stop srv;
   srv.request.value=2;
   srv_record_stop.call(srv);
   ROS_INFO("%d",srv.response.result);
@@ -383,7 +383,7 @@ void RosThread::fn_record_stop()
 
 void RosThread::fn_upload_mission()
 {
-  muin_px4::ui_mission_request srv;
+  jane_ui::ui_mission_request srv;
   srv_upload_mission.call(srv);
   ROS_INFO("%d",srv.response.complete);
   ROS_INFO("mission upload");
@@ -391,7 +391,7 @@ void RosThread::fn_upload_mission()
 
 void RosThread::fn_local2gps()
 {
-  muin_px4::start_trig srv;
+  jane_ui::start_trig srv;
   srv.request.trigger = true;
   srv_local2gps.call(srv);
   ROS_INFO("%d",srv.response.success);
@@ -400,7 +400,7 @@ void RosThread::fn_local2gps()
 
 void RosThread::fn_nonstop_mission()
 {
-  muin_px4::automatic_mission_start srv;
+  jane_ui::automatic_mission_start srv;
   nonstop_mission = !nonstop_mission;
   srv.request.start_mission = nonstop_mission;
   srv_nonstop_mission.call(srv);
@@ -429,7 +429,7 @@ void RosThread::fn_sethome()
 
 void RosThread::fn_returnhome()
 {
-  muin_px4::return_home srv;
+  jane_ui::return_home srv;
   srv_rth.call(srv);
   ROS_INFO("%d",srv.response.result);
   ROS_INFO("Retrun-to-Home");

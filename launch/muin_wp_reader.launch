@@ -1,0 +1,6 @@
+<launch>
+    <arg name="waypoint_file_path" default="$(find jane_ui)/jane_waypoint_reader/data/drone_contest.txt"/>
+    <param name="/jane_ui/wp_file_path" type="string" value="$(arg waypoint_file_path)" />
+    <!-- waypoint text reader -->
+    <node name="jane_waypoint_reader" pkg="jane_ui" type="jane_waypoint_reader" output="screen"/>
+</launch>

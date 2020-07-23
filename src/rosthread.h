@@ -32,21 +32,21 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 // Service
-#include "muin_px4/pause_mission.h"
-#include "muin_px4/landing.h"
-#include "muin_px4/take_off.h"
-#include "muin_px4/record_start.h"
-#include "muin_px4/record_stop.h"
-#include "muin_px4/send_mission_info.h"
-#include "muin_px4/next_mission.h"
-#include "muin_px4/previous_mission.h"
-#include "muin_px4/emergency_landing.h"
-#include "muin_px4/test_srv.h"
-#include "muin_px4/start_trig.h"
-#include "muin_px4/log_data.h"
-#include "muin_px4/ui_mission_request.h"
-#include "muin_px4/automatic_mission_start.h"
-#include "muin_px4/return_home.h"
+#include "jane_ui/pause_mission.h"
+#include "jane_ui/landing.h"
+#include "jane_ui/take_off.h"
+#include "jane_ui/record_start.h"
+#include "jane_ui/record_stop.h"
+#include "jane_ui/send_mission_info.h"
+#include "jane_ui/next_mission.h"
+#include "jane_ui/previous_mission.h"
+#include "jane_ui/emergency_landing.h"
+#include "jane_ui/test_srv.h"
+#include "jane_ui/start_trig.h"
+#include "jane_ui/log_data.h"
+#include "jane_ui/ui_mission_request.h"
+#include "jane_ui/automatic_mission_start.h"
+#include "jane_ui/return_home.h"
 #include "mavros_msgs/CommandHome.h"
 #include "mavros_msgs/CommandLong.h"
 
@@ -133,12 +133,12 @@ public:
 
     void estgpsCallback(const sensor_msgs::NavSatFix & msg);
     void gpssatCallback(const diagnostic_msgs::DiagnosticArray::ConstPtr &msg);
-    void localposeCallback(const nav_msgs::Odometry::ConstPtr &msg);
+    void localposeCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
     void imuCallback(const sensor_msgs::Imu &msg);
     void statusCallback(const mavros_msgs::StatusText::ConstPtr &msg);
     void batteryCallback(const sensor_msgs::BatteryState::ConstPtr &msg);
     void mavstateCallback(const mavros_msgs::State::ConstPtr &msg);
-    void logdataCallback(const muin_px4::log_data::ConstPtr &msg);
+    void logdataCallback(const jane_ui::log_data::ConstPtr &msg);
     void gpsglobalCallback(const sensor_msgs::NavSatFix &msg);
     void gpsfixCallback(const sensor_msgs::NavSatFix &msg);
     void gpscompassCallback(const std_msgs::Float64 &msg);

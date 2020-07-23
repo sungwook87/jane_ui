@@ -1,0 +1,16 @@
+<launch>
+
+<!-- 2d visualization -->
+<node name="jane_2dviz_test" pkg="jane_ui" type="jane_2dviz" output="screen">
+</node>
+
+<!-- local to gps estimation -->
+<node name="jane_local2gps" pkg="jane_ui" type="jane_local2gps" output="screen">
+</node>
+
+<!-- waypoint text reader -->
+<arg name="waypoint_file_path" default="$(find jane_ui)/jane_waypoint_reader/data/wp_20191125.txt"/>
+<param name="/jane_ui/wp_file_path" type="string" value="$(arg waypoint_file_path)" />
+<node name="jane_waypoint_reader" pkg="jane_ui" type="jane_waypoint_reader" output="screen"/>
+
+</launch>

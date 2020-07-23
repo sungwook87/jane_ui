@@ -312,23 +312,23 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     show();
 
-    setWindowTitle(tr("Muinche GCS"));
-    connect(p_rthButton,            &QPushButton::clicked, this, &UIWindow::muin_rth);
-    connect(p_sethome,              &QPushButton::clicked, this, &UIWindow::muin_sethome);
+    setWindowTitle(tr("Jane GCS"));
+    connect(p_rthButton,            &QPushButton::clicked, this, &UIWindow::jane_rth);
+    connect(p_sethome,              &QPushButton::clicked, this, &UIWindow::jane_sethome);
 //    connect(p_quitButton,           &QPushButton::clicked, this, &UIWindow::close);
-    connect(p_quitButton,           &QPushButton::clicked, this, &UIWindow::muin_quit);
-    connect(p_takeoffButton,        &QPushButton::clicked, this, &UIWindow::muin_takeoff);
-    connect(p_landingButton,        &QPushButton::clicked, this, &UIWindow::muin_landing);
-    connect(p_elandingButton,       &QPushButton::clicked, this, &UIWindow::muin_elanding);
-    connect(p_missionstartButton,   &QPushButton::clicked, this, &UIWindow::muin_nonstopmission);
-    connect(p_missionpauseButton,   &QPushButton::clicked, this, &UIWindow::muin_missionpause);
-    connect(p_local2gps,            &QPushButton::clicked, this, &UIWindow::muin_local2gps);
-    connect(p_nextwaypoint,         &QPushButton::clicked, this, &UIWindow::muin_nextmission);
-    connect(p_previouswaypoint,     &QPushButton::clicked, this, &UIWindow::muin_prevmission);
-    connect(p_missionuploadButton,  &QPushButton::clicked, this, &UIWindow::muin_missionupload);
-    connect(p_camstartButton,       &QPushButton::clicked, this, &UIWindow::muin_camstart);
-    connect(p_camstopButton,        &QPushButton::clicked, this, &UIWindow::muin_camstop);
-    connect(p_killButton,           &QPushButton::clicked, this, &UIWindow::muin_kill);
+    connect(p_quitButton,           &QPushButton::clicked, this, &UIWindow::jane_quit);
+    connect(p_takeoffButton,        &QPushButton::clicked, this, &UIWindow::jane_takeoff);
+    connect(p_landingButton,        &QPushButton::clicked, this, &UIWindow::jane_landing);
+    connect(p_elandingButton,       &QPushButton::clicked, this, &UIWindow::jane_elanding);
+    connect(p_missionstartButton,   &QPushButton::clicked, this, &UIWindow::jane_nonstopmission);
+    connect(p_missionpauseButton,   &QPushButton::clicked, this, &UIWindow::jane_missionpause);
+    connect(p_local2gps,            &QPushButton::clicked, this, &UIWindow::jane_local2gps);
+    connect(p_nextwaypoint,         &QPushButton::clicked, this, &UIWindow::jane_nextmission);
+    connect(p_previouswaypoint,     &QPushButton::clicked, this, &UIWindow::jane_prevmission);
+    connect(p_missionuploadButton,  &QPushButton::clicked, this, &UIWindow::jane_missionupload);
+    connect(p_camstartButton,       &QPushButton::clicked, this, &UIWindow::jane_camstart);
+    connect(p_camstopButton,        &QPushButton::clicked, this, &UIWindow::jane_camstop);
+    connect(p_killButton,           &QPushButton::clicked, this, &UIWindow::jane_kill);
 
     connect(&m_RosThread,         &RosThread::localpose, this, &UIWindow::updatePoseDisplay);
     connect(&m_RosThread,         &RosThread::gpscount, this, &UIWindow::satelliteDisplay);
@@ -350,17 +350,17 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     m_RosThread.init();
 }//end constructor
-void UIWindow::muin_sethome(){m_RosThread.fn_sethome();}
-void UIWindow::muin_takeoff(){m_RosThread.fn_take_off();}
-void UIWindow::muin_landing(){m_RosThread.fn_landing();}
-void UIWindow::muin_elanding(){m_RosThread.fn_emergency_landing();}
-void UIWindow::muin_missionpause(){m_RosThread.fn_pause_mission();}
-void UIWindow::muin_local2gps(){m_RosThread.fn_local2gps();}
-void UIWindow::muin_nextmission(){m_RosThread.fn_next_mission();}
-void UIWindow::muin_prevmission(){m_RosThread.fn_prev_mission();}
-void UIWindow::muin_missionupload(){m_RosThread.fn_upload_mission();}
-void UIWindow::muin_nonstopmission(){m_RosThread.fn_nonstop_mission();}
-void UIWindow::muin_rth()
+void UIWindow::jane_sethome(){m_RosThread.fn_sethome();}
+void UIWindow::jane_takeoff(){m_RosThread.fn_take_off();}
+void UIWindow::jane_landing(){m_RosThread.fn_landing();}
+void UIWindow::jane_elanding(){m_RosThread.fn_emergency_landing();}
+void UIWindow::jane_missionpause(){m_RosThread.fn_pause_mission();}
+void UIWindow::jane_local2gps(){m_RosThread.fn_local2gps();}
+void UIWindow::jane_nextmission(){m_RosThread.fn_next_mission();}
+void UIWindow::jane_prevmission(){m_RosThread.fn_prev_mission();}
+void UIWindow::jane_missionupload(){m_RosThread.fn_upload_mission();}
+void UIWindow::jane_nonstopmission(){m_RosThread.fn_nonstop_mission();}
+void UIWindow::jane_rth()
 {
   QMessageBox::StandardButton reply;
   reply = QMessageBox::critical(this, "Hey!", "Go Home?", QMessageBox::Yes|QMessageBox::No);
@@ -372,7 +372,7 @@ void UIWindow::muin_rth()
   }
 }
 
-void UIWindow::muin_quit()
+void UIWindow::jane_quit()
 {
   QMessageBox::StandardButton reply;
   reply = QMessageBox::question(this, "Hey!", "want to Quit?", QMessageBox::Yes|QMessageBox::No);
@@ -383,9 +383,9 @@ void UIWindow::muin_quit()
     qDebug() << "<<<<<     Whooo!     >>>>>";
   }
 }
-void UIWindow::muin_camstart(){m_RosThread.fn_record_start();}
-void UIWindow::muin_camstop(){m_RosThread.fn_record_stop();}
-void UIWindow::muin_kill()
+void UIWindow::jane_camstart(){m_RosThread.fn_record_start();}
+void UIWindow::jane_camstop(){m_RosThread.fn_record_stop();}
+void UIWindow::jane_kill()
 {
   QMessageBox::StandardButton reply;
   reply = QMessageBox::critical(this, "Hey!", "KILL ?", QMessageBox::Yes|QMessageBox::No);
