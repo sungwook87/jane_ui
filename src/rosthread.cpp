@@ -34,7 +34,7 @@ bool RosThread::init()
 
 //  subscribe //
     sub_pix_diagnostic = nh.subscribe("/diagnostics",1, &RosThread::gpssatCallback, this);
-    sub_estgps = nh.subscribe("/estimated_global_position",1,&RosThread::estgpsCallback, this);
+   // sub_estgps = nh.subscribe("/estimated_global_position",1,&RosThread::estgpsCallback, this);
     sub_localpose = nh.subscribe("/mavros/local_position/pose", 1, &RosThread::localposeCallback, this);
     sub_imu = nh.subscribe("/mavros/imu/data",1, &RosThread::imuCallback, this);
     sub_status = nh.subscribe("/mavros/statustext/recv", 1, &RosThread::statusCallback, this);
@@ -47,6 +47,7 @@ bool RosThread::init()
     sub_bodyvel = nh.subscribe("/mavros/local_position/velocity_body", 1, &RosThread::bodyvelCallback, this);
     sub_2dmap = nh.subscribe("/mapimage", 1, &RosThread::mapCallback, this);
     sub_cam = nh.subscribe("/camera/image", 1, &RosThread::camCallback, this);
+    sub_gimbal = nh.subscribe("jane_gimbal/camera_orientation", 1, &RosThread::gimbalCallback, this);
  //   pub_img = nh.advertise<sensor_msgs::Image>("/output_video", 1);
 // service //
     srv_take_off            = nh.serviceClient<jane_ui::take_off>("take_off");
@@ -157,17 +158,17 @@ void RosThread::mavstateCallback(const mavros_msgs::State::ConstPtr &msg)
   Q_EMIT state(armStr, mode);
 }
 
-void RosThread::estgpsCallback(const sensor_msgs::NavSatFix &msg)
-{
-  QMutex * pMutex = new QMutex();
-  pMutex->lock();
-  lon = msg.longitude;
-  lat = msg.latitude;
-  alt = msg.altitude;
-  pMutex->unlock();
-  delete pMutex;
-  Q_EMIT estGPS(lon, lat, alt);
-}
+//void RosThread::estgpsCallback(const sensor_msgs::NavSatFix &msg)
+//{
+//  QMutex * pMutex = new QMutex();
+//  pMutex->lock();
+//  lon = msg.longitude;
+//  lat = msg.latitude;
+//  alt = msg.altitude;
+//  pMutex->unlock();
+//  delete pMutex;
+//  Q_EMIT estGPS(lon, lat, alt);
+//}
 
 void RosThread::gpsglobalCallback(const sensor_msgs::NavSatFix &msg)
 {
@@ -309,11 +310,23 @@ void RosThread::camCallback(const sensor_msgs::ImageConstPtr &msg)
 
 }
 
+void RosThread::gimbalCallback(const jane_ui::JaneGimbalOrientationConstPtr &msg)
+{
+  QMutex * pMutex = new QMutex();
+  pMutex->lock();
+  m_gpitch = msg->euler_orientation.x;
+  m_groll = msg->euler_orientation.y;
+  pMutex->unlock();
+  delete pMutex;
+  Q_EMIT gimbalatti(m_gpitch, m_groll);
+}
 
-/*
- * Service Functions
- *
- */
+
+
+/******************************
+       Service Functions
+*******************************/
+
 
 void RosThread::fn_take_off()
 {

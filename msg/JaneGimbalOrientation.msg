@@ -1,0 +1,2 @@
+geometry_msgs/Vector3 euler_orientation
+bool unlimited

@@ -2,12 +2,6 @@ cmake_minimum_required(VERSION 2.8.3)
 project(jane_ui)
 set (CMAKE_CXX_STANDARD 11)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
-
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
     geometry_msgs
     message_generation
@@ -17,10 +11,11 @@ find_package(catkin REQUIRED COMPONENTS
     sensor_msgs
     std_msgs
     cv_bridge
+    diagnostic_updater
+    std_srvs
 )
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
 
+catkin_python_setup()
 
 add_service_files(
   FILES
@@ -53,6 +48,7 @@ add_message_files(
         log_data.msg
         mission_struct.msg
         rpyThrust.msg
+        JaneGimbalOrientation.msg
 )
 
 generate_messages(
@@ -82,7 +78,7 @@ include_directories(
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp std_msgs geometry_msgs sensor_msgs
+  CATKIN_DEPENDS roscpp std_msgs geometry_msgs sensor_msgs message_runtime std_msgs
   DEPENDS system-lib
 )
 
@@ -92,13 +88,17 @@ catkin_package(
 #########################
 #qt5_add_resources(QT_RESOURCES_CPP qt_resources/arrows.qrc)
 qt5_wrap_cpp(QT_MOC_HPP src/UIwindow.h src/rosthread.h)
+set(gauge_source
+    src/qcgaugewidget.cpp
+    src/qcgaugewidget.h
+)
 
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
 
 add_executable(jane_ui_node src/UIwindow.cpp src/rosthread.cpp src/main.cpp
                                   ${QT_RESOURCES_CPP} ${QT_MOC_HPP})
 add_dependencies(jane_ui_node jane_ui_generate_messages_cpp)
-target_link_libraries(jane_ui_node ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::Widgets)
+target_link_libraries(jane_ui_node ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::Widgets )
 install(TARGETS jane_ui_node  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 
@@ -144,5 +144,13 @@ add_dependencies(jane_waypoint_reader jane_ui_generate_messages_cpp)
 target_link_libraries(jane_waypoint_reader
                 ${catkin_LIBRARIES}
                 )
+
+#########################
+##       Gimbal        ##
+#########################
+catkin_install_python(
+  PROGRAMS jane_gimbal/storm32_node.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 

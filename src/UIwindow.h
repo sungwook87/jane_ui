@@ -1,5 +1,6 @@
 #ifndef UI_WINDOW_H
 #define UI_WINDOW_H
+
 #include <QtWidgets>
 #include <QPushButton>
 #include <QString>
@@ -16,7 +17,7 @@
 #include <QPixmap>
 #include <QGraphicsView>
 #include <QGraphicsScene>
-
+#include "qcgaugewidget.h"
 namespace ui_server{
 #define PI 3.14159265359
 //Q_DECLARE_METATYPE (std::string)
@@ -30,7 +31,7 @@ public:
 
     Q_SLOT void updatePoseDisplay(double x, double y, double z, double theta);
     Q_SLOT void satelliteDisplay(unsigned int count);
-    Q_SLOT void estGPSDisplay(double lon, double lat, double alt);
+    //Q_SLOT void estGPSDisplay(double lon, double lat, double alt);
     Q_SLOT void imuDisplay(double heading);
     Q_SLOT void logDisplay(std::string log);
     Q_SLOT void batDisplay(double bat);
@@ -40,8 +41,9 @@ public:
     Q_SLOT void gpscompassDisplay(double heading);
     Q_SLOT void mapimageDisplay(cv::Mat image);
     Q_SLOT void camimageDisplay(cv::Mat image);
-
-
+    Q_SLOT void gimbalDisplay(double pitch, double roll);
+   // Q_SLOT void on_horizontalSlider_valueChanged(int value);
+   // Q_SLOT void on_verticalSlider_valueChanged(int value);
 
   //  qRegisterMetaType<std::std>
 
@@ -61,6 +63,8 @@ private:
     Q_SLOT void jane_kill();
     Q_SLOT void jane_sethome();
     Q_SLOT void jane_rth();
+
+
     void jane_quit();
 
 
@@ -114,15 +118,12 @@ private:
     QLineEdit *p_zDisplay;
     QLineEdit *p_thetaDisplay;
     // est. GPS
-    QHBoxLayout *p_estlatLayout;
-    QHBoxLayout *p_estlonLayout;
-    QHBoxLayout *p_estaltLayout;
-    QLabel *p_estlatLabel;
-    QLabel *p_estlonLabel;
-    QLabel *p_estaltLabel;
-    QLineEdit *p_estlatDisplay;
-    QLineEdit *p_estlonDisplay;
-    QLineEdit *p_estaltDisplay;
+    QHBoxLayout *p_gimpitLayout;
+    QHBoxLayout *p_gimrollLayout;
+    QLabel *p_gimpitLabel;
+    QLabel *p_gimrollLabel;
+    QLineEdit *p_gimpitDisplay;
+    QLineEdit *p_gimrollDisplay;
     // fix GPS
     QHBoxLayout *p_fixlatLayout;
     QHBoxLayout *p_fixlonLayout;
@@ -168,6 +169,7 @@ private:
     QHBoxLayout *p_lllogLayout;
     QHBoxLayout *p_imuLayout;
     QHBoxLayout *p_logoLayout;
+    //QVBoxLayout *p_verticalLayout;
 
     QLabel *p_imuLabel;
     QLabel *p_satelliteLabel;
@@ -199,6 +201,11 @@ private:
     QPushButton *closeButton;
 
     RosThread m_RosThread;
+
+    QcGaugeWidget *mAttitudeGauge;
+    QcNeedleItem *mAttitudeNeedle;
+    QcAttitudeMeter *mAttMeter;
+    QLabel *p_attLabel;
 };//end class ControlWindow
 }//end namespace
 #endif

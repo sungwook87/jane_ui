@@ -31,6 +31,8 @@
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "jane_ui/JaneGimbalOrientation.h"
+
 // Service
 #include "jane_ui/pause_mission.h"
 #include "jane_ui/landing.h"
@@ -76,6 +78,7 @@ private:
     double rR, rP, rY;
     double xvel, yvel, zvel;
     double comp;
+    double m_gpitch, m_groll;
     //cv::Mat imagemap;
     cv::Mat imagecam;
 
@@ -93,7 +96,7 @@ private:
     ros::Publisher pub_img;
     ros::Subscriber pose_listener;
     ros::Subscriber sub_pix_diagnostic;
-    ros::Subscriber sub_estgps;
+    //ros::Subscriber sub_estgps;
     ros::Subscriber sub_localpose;
     ros::Subscriber sub_imu;
     ros::Subscriber sub_status;
@@ -108,6 +111,8 @@ private:
 
     ros::Subscriber sub_2dmap;
     ros::Subscriber sub_cam;
+    ros::Subscriber sub_gimbal;
+
     ros::ServiceClient srv_take_off;
     ros::ServiceClient srv_landing;
     ros::ServiceClient srv_pause_mission;
@@ -131,7 +136,7 @@ public:
 
     bool init();
 
-    void estgpsCallback(const sensor_msgs::NavSatFix & msg);
+    //void estgpsCallback(const sensor_msgs::NavSatFix & msg);
     void gpssatCallback(const diagnostic_msgs::DiagnosticArray::ConstPtr &msg);
     void localposeCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
     void imuCallback(const sensor_msgs::Imu &msg);
@@ -145,6 +150,7 @@ public:
     void bodyvelCallback(const geometry_msgs::TwistStamped::ConstPtr &msg);
     void mapCallback(const sensor_msgs::ImageConstPtr &msg);
     void camCallback(const sensor_msgs::ImageConstPtr &msg);
+    void gimbalCallback(const jane_ui::JaneGimbalOrientationConstPtr &msg);
 
     void fn_take_off();
     void fn_landing();
@@ -166,7 +172,6 @@ public:
     Q_SLOT void run();
 
     Q_SIGNAL void gpscount(unsigned int);
-    Q_SIGNAL void estGPS(double, double, double);
     Q_SIGNAL void fixGPS(double, double, double);
     Q_SIGNAL void bodyvel(double, double, double);
     Q_SIGNAL void compass(double);
@@ -179,7 +184,7 @@ public:
     Q_SIGNAL void globalGPS(double, double, double);
     Q_SIGNAL void mapimage(cv::Mat);
     Q_SIGNAL void camimage(cv::Mat);
-
+    Q_SIGNAL void gimbalatti(double, double);
 
 };
 #endif

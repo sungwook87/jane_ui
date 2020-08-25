@@ -40,9 +40,8 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_zLayout = new QHBoxLayout();
     p_thetaLayout = new QHBoxLayout();
 
-    p_estlatLayout = new QHBoxLayout();
-    p_estlonLayout = new QHBoxLayout();
-    p_estaltLayout = new QHBoxLayout();
+    p_gimpitLayout = new QHBoxLayout();
+    p_gimrollLayout = new QHBoxLayout();
 
     p_fixlatLayout = new QHBoxLayout();
     p_fixlonLayout = new QHBoxLayout();
@@ -100,19 +99,16 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     ploglog->resize(300,100);
 
 
-    // est gps
-    p_estlatLabel = new QLabel();
-    p_estlatLabel->setText(tr("Latitude(est):"));
-    p_estlatDisplay = new QLineEdit();
-    p_estlatDisplay->setText(tr("0.0"));
-    p_estlonLabel = new QLabel();
-    p_estlonLabel->setText(tr("Longitude(est):"));
-    p_estlonDisplay = new QLineEdit();
-    p_estlonDisplay->setText(tr("0.0"));
-    p_estaltLabel = new QLabel();
-    p_estaltLabel->setText(tr("Altitude(est):"));
-    p_estaltDisplay = new QLineEdit();
-    p_estaltDisplay->setText(tr("0.0"));
+    // gimbal
+    p_gimpitLabel = new QLabel();
+    p_gimpitLabel->setText(tr("Gimbal = pitch:"));
+    p_gimpitDisplay = new QLineEdit();
+    p_gimpitDisplay->setText(tr("0.0"));
+    p_gimrollLabel = new QLabel();
+    p_gimrollLabel->setText(tr("roll:"));
+    p_gimrollDisplay = new QLineEdit();
+    p_gimrollDisplay->setText(tr("0.0"));
+
     // fix gps
     p_fixlatLabel = new QLabel();
     p_fixlatLabel->setText(tr("Latitude(fix):"));
@@ -194,6 +190,28 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_cam = new QGraphicsScene();
     p_camview = new QGraphicsView(p_cam);
 
+
+//    mAttitudeGauge = new QcGaugeWidget();
+//    mAttitudeGauge->addBackground(99);
+//    QcBackgroundItem *bkg = mAttitudeGauge->addBackground(92);
+//    bkg->clearrColors();
+//    bkg->addColor(0.1,Qt::black);
+//    bkg->addColor(1.0,Qt::white);
+//    mAttMeter = mAttitudeGauge->addAttitudeMeter(88);
+
+//    mAttitudeNeedle = mAttitudeGauge->addNeedle(70);
+//    mAttitudeNeedle->setMinDegree(0);
+//    mAttitudeNeedle->setMaxDegree(180);
+//    mAttitudeNeedle->setValueRange(0,180);
+//    mAttitudeNeedle->setCurrentValue(90);
+//    mAttitudeNeedle->setColor(Qt::white);
+//    mAttitudeNeedle->setNeedle(QcNeedleItem::AttitudeMeterNeedle);
+//    mAttitudeGauge->addGlass(80);
+//    p_verticalLayout->addWidget(mAttitudeGauge);
+//    p_attLabel = new QLabel();
+
+
+
     p_satelliteLayout->addWidget(p_satelliteLabel);
     p_satelliteLayout->addWidget(p_satelliteDisplay);
     p_satelliteLayout->addWidget(p_batteryLabel);
@@ -214,14 +232,12 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_globallatLayout->addWidget(p_globalheadLabel);
     p_globallatLayout->addWidget(p_globalheadDisplay);
 
-    p_estlatLayout->addWidget(p_estlatLabel);
-    p_estlatLayout->addWidget(p_estlatDisplay);
-    p_estlatLayout->addWidget(p_estlonLabel);
-    p_estlatLayout->addWidget(p_estlonDisplay);
-    p_estlatLayout->addWidget(p_estaltLabel);
-    p_estlatLayout->addWidget(p_estaltDisplay);
-    p_estlatLayout->addWidget(p_imuLabel);
-    p_estlatLayout->addWidget(p_imuDisplay);
+    p_gimpitLayout->addWidget(p_gimpitLabel);
+    p_gimpitLayout->addWidget(p_gimpitDisplay);
+    p_gimpitLayout->addWidget(p_gimrollLabel);
+    p_gimpitLayout->addWidget(p_gimrollDisplay);
+    p_gimpitLayout->addWidget(p_imuLabel);
+    p_gimpitLayout->addWidget(p_imuDisplay);
 
     p_llogLayout->addWidget(p_camview);
     p_llogLayout->addWidget(p_mapview);
@@ -245,10 +261,11 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     leftLayout->addLayout(p_satelliteLayout);
     leftLayout->addLayout(p_globallatLayout);
-    leftLayout->addLayout(p_estlatLayout);
     leftLayout->addLayout(p_xLayout);
+    leftLayout->addLayout(p_gimpitLayout);
    // leftLayout->addLayout(p_xvelLayout);
     leftLayout->addLayout(p_llogLayout);
+  //  leftLayout->addLayout(p_verticalLayout);
     leftLayout->addLayout(p_logoLayout);
 
 
@@ -332,7 +349,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     connect(&m_RosThread,         &RosThread::localpose, this, &UIWindow::updatePoseDisplay);
     connect(&m_RosThread,         &RosThread::gpscount, this, &UIWindow::satelliteDisplay);
-    connect(&m_RosThread,         &RosThread::estGPS, this, &UIWindow::estGPSDisplay);
+    connect(&m_RosThread,         &RosThread::gimbalatti, this, &UIWindow::gimbalDisplay);
     connect(&m_RosThread,         &RosThread::imu, this, &UIWindow::imuDisplay);
     connect(&m_RosThread,         &RosThread::battery, this, &UIWindow::batDisplay);
     connect(&m_RosThread,         &RosThread::globalGPS, this, &UIWindow::globalgpsDisplay);
@@ -350,6 +367,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     m_RosThread.init();
 }//end constructor
+
 void UIWindow::jane_sethome(){m_RosThread.fn_sethome();}
 void UIWindow::jane_takeoff(){m_RosThread.fn_take_off();}
 void UIWindow::jane_landing(){m_RosThread.fn_landing();}
@@ -454,17 +472,17 @@ void UIWindow::stateDisplay(std::string arm, std::string mode)
   p_modeDisplay->setText(qmode);
 }
 
-void UIWindow::estGPSDisplay(double lon, double lat, double alt)
-{
-  QString qlon, qlat, qalt;
-  qlon.setNum(lon);
-  qlat.setNum(lat);
-  qalt.setNum(alt);
+//void UIWindow::estGPSDisplay(double lon, double lat, double alt)
+//{
+//  QString qlon, qlat, qalt;
+//  qlon.setNum(lon);
+//  qlat.setNum(lat);
+//  qalt.setNum(alt);
 
-  p_estlatDisplay->setText(qlon);
-  p_estlonDisplay->setText(qlat);
-  p_estaltDisplay->setText(qalt);
-}
+//  p_estlatDisplay->setText(qlon);
+//  p_estlonDisplay->setText(qlat);
+//  p_estaltDisplay->setText(qalt);
+//}
 
 void UIWindow::updatePoseDisplay(double x, double y, double z, double theta)
 {
@@ -536,7 +554,30 @@ void UIWindow::camimageDisplay(cv::Mat image)
   p_cam->addPixmap(pixmap);
 }
 
+void UIWindow::gimbalDisplay(double pitch, double roll)
+{
+  QString qpit, qroll;
+  qpit.setNum(pitch);
+  qroll.setNum(roll);
 
+  p_gimpitDisplay->setText(qpit);
+  p_gimrollDisplay->setText(qroll);
+}
+
+//void UIWindow::on_horizontalSlider_valueChanged(int value)
+//{
+//    // roll
+//    value = 50;
+//    mAttitudeNeedle->setCurrentValue(90-value);
+//    mAttMeter->setCurrentRoll(value);
+//}
+
+//void UIWindow::on_verticalSlider_valueChanged(int value)
+//{
+//  value = 50;
+//  p_attLabel->setText(QString::number(value));
+//  mAttMeter->setCurrentPitch(value);
+//}
 
 }//end namespace
 
