@@ -154,3 +154,12 @@ catkin_install_python(
 )
 
 
+#########################
+##       Save Log      ##
+#########################
+add_executable(jane_savelog src/jane_savelog.cpp)
+add_dependencies(jane_savelog jane_ui_generate_messages_cpp)
+target_link_libraries(jane_savelog
+                ${catkin_LIBRARIES}
+                )
+
