@@ -21,17 +21,36 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     p_previouswaypoint = new QPushButton(tr("&Previous WP"));
     p_killButton = new QPushButton(tr("&KILL"));
     p_rthButton = new QPushButton(tr("&Return Home"));
+    p_qgcButton = new QPushButton();
+    p_kaistButton= new QPushButton();
+    p_xdroneButton = new QPushButton();
 
-    p_logoButton= new QPushButton();
+
+    QPalette kaistpalette = p_kaistButton->palette();
+    kaistpalette.setColor(QPalette::Button,QColor(255,255,255));
+    p_kaistButton->setAutoFillBackground(true);
+    p_kaistButton->setFlat(true);
+    p_kaistButton->setPalette(kaistpalette);
+    p_kaistButton->setIcon(QIcon(":/images/customLogo.png"));
+    p_kaistButton->setIconSize(QSize(500, 114));
 
 
-    QPalette palette = p_logoButton->palette();
-    palette.setColor(QPalette::Button,QColor(255,255,255));
-    p_logoButton->setAutoFillBackground(true);
-    p_logoButton->setFlat(true);
-    p_logoButton->setPalette(palette);
-    p_logoButton->setIcon(QIcon(":/images/customLogo.png"));
-    p_logoButton->setIconSize(QSize(330, 110));
+    QPalette xdronepalette = p_xdroneButton->palette();
+    xdronepalette.setColor(QPalette::Button,QColor(255,255,255));
+    p_xdroneButton->setAutoFillBackground(true);
+    p_xdroneButton->setFlat(true);
+    p_xdroneButton->setPalette(xdronepalette);
+    p_xdroneButton->setIcon(QIcon(":/images/xdrone.png"));
+    p_xdroneButton->setIconSize(QSize(500, 100));
+
+    QPalette qgcpalette = p_qgcButton->palette();
+    qgcpalette.setColor(QPalette::Button,QColor(255,255,255));
+    p_qgcButton->setAutoFillBackground(true);
+    p_qgcButton->setFlat(true);
+    p_qgcButton->setPalette(qgcpalette);
+    p_qgcButton->setIcon(QIcon(":/images/qgc.png"));
+    p_qgcButton->setIconSize(QSize(70, 70));
+    p_qgcButton->setFixedSize(70,70);
 
     /** Set up the Position Display **/
     leftLayout = new QVBoxLayout();
@@ -181,8 +200,10 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     p_logoLayout = new QHBoxLayout();
     p_logoLayout->addSpacing(150);
-    p_logoLayout->addWidget(p_logoButton);
-    p_logoLayout->addSpacing(150);
+    p_logoLayout->addWidget(p_kaistButton);
+    p_logoLayout->addWidget(p_xdroneButton);
+    p_logoLayout->addSpacing(200);
+    p_logoLayout->addWidget(p_qgcButton);
 
     p_map = new QGraphicsScene();
     p_mapview = new QGraphicsView(p_map);
@@ -269,7 +290,6 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     leftLayout->addLayout(p_logoLayout);
 
 
-
     /** Set up the Layouts **/
 
     rightLayout = new QVBoxLayout();
@@ -305,6 +325,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
 
     layout5->addWidget(p_previouswaypoint);
     layout5->addWidget(p_nextwaypoint);
+    layout6->addWidget(p_qgcButton);
 
     layout8->addWidget(p_rthButton);
     layout9->addWidget(p_killButton);
@@ -346,6 +367,7 @@ UIWindow::UIWindow(int argc, char **argv, QWidget *parent)
     connect(p_camstartButton,       &QPushButton::clicked, this, &UIWindow::jane_camstart);
     connect(p_camstopButton,        &QPushButton::clicked, this, &UIWindow::jane_camstop);
     connect(p_killButton,           &QPushButton::clicked, this, &UIWindow::jane_kill);
+    connect(p_qgcButton,            &QPushButton::clicked, this, &UIWindow::qgc_run);
 
     connect(&m_RosThread,         &RosThread::localpose, this, &UIWindow::updatePoseDisplay);
     connect(&m_RosThread,         &RosThread::gpscount, this, &UIWindow::satelliteDisplay);
@@ -562,6 +584,16 @@ void UIWindow::gimbalDisplay(double pitch, double roll)
 
   p_gimpitDisplay->setText(qpit);
   p_gimrollDisplay->setText(qroll);
+}
+
+void UIWindow::qgc_run()
+{
+  QString program = "/home/sungwook/Downloads/QGroundControl.AppImage";
+
+  QStringList arguments;
+
+  QProcess *myProcess = new QProcess(this);
+  myProcess->start(program);
 }
 
 //void UIWindow::on_horizontalSlider_valueChanged(int value)

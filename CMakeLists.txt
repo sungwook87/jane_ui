@@ -79,14 +79,14 @@ include_directories(
 catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS roscpp std_msgs geometry_msgs sensor_msgs message_runtime std_msgs
-  DEPENDS system-lib
+  DEPENDS #system-lib
 )
 
 
 #########################
 ##         GUI         ##
 #########################
-#qt5_add_resources(QT_RESOURCES_CPP qt_resources/arrows.qrc)
+qt5_add_resources(QT_RESOURCES_CPP qt_resources/arrows.qrc)
 qt5_wrap_cpp(QT_MOC_HPP src/UIwindow.h src/rosthread.h)
 set(gauge_source
     src/qcgaugewidget.cpp

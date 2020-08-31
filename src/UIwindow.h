@@ -66,6 +66,7 @@ private:
 
 
     void jane_quit();
+    void qgc_run();
 
 
     QPushButton *p_killButton;
@@ -84,8 +85,11 @@ private:
     QPushButton *p_camstopButton;
     QPushButton *p_quitButton;
     QPushButton *p_rthButton;
-    QPushButton *p_logoButton;
+    QPushButton *p_kaistButton;
+    QPushButton *p_xdroneButton;
     QTextBrowser *ploglog;
+
+    QPushButton *p_qgcButton;
 
 
 
@@ -195,7 +199,6 @@ private:
     QHBoxLayout *p_camLayout;
 
     QVBoxLayout *bottomLayout;
-    QPixmap logo;
 
     QHBoxLayout *mainLayout;
     QPushButton *closeButton;
@@ -206,6 +209,8 @@ private:
     QcNeedleItem *mAttitudeNeedle;
     QcAttitudeMeter *mAttMeter;
     QLabel *p_attLabel;
+
+
 };//end class ControlWindow
 }//end namespace
 #endif
